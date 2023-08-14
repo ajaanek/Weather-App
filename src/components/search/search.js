@@ -3,26 +3,68 @@ import { AsyncPaginate } from "react-select-async-paginate";
 import { geoApiOptions, GEO_API_URL } from "../../api";
 import "../../App.css";
 
-const Search = ({onSearchChange} ) => {
+const Search = ({ onSearchChange }) => {
 
     const [search, setSearch] = useState(null);
 
+    const predefinedCities = [
+        {
+            name: "Toronto",
+            latitude: 43.669,
+            longitude: -79.3916,
+            countryCode: "CA"
+        },
+        {
+            name: "New York",
+            latitude: 40.7128,
+            longitude: -74.0060,
+            countryCode: "US",
+        },
+        {
+            name: "Seattle",
+            latitude: 47.6062,
+            longitude: -122.3321,
+            countryCode: "US"
+        },
+        {
+            name: "London",
+            latitude: 51.5074,
+            longitude: -0.1278,
+            countryCode: "GB",
+        },
+        {
+            name: "Dubai",
+            latitude: 25.2697,
+            longitude: 55.3094,
+            countryCode: "AE"
+        }
+    ];
+
+    const mapCityToOption = (city) => ({
+        value: `${city.latitude} ${city.longitude}`,
+        label: `${city.name}, ${city.countryCode}`,
+    });
+
     const loadOptions = (inputValue) => {
-        return fetch(`${GEO_API_URL}?minPopulation=1000000&namePrefix=${inputValue}`,
-      geoApiOptions)
-        .then((response) => response.json())
-        .then((response) => {
-            return {
-                options: response.data.map((city) => {
+        return fetch(`${GEO_API_URL}?minPopulation=100000&namePrefix=${inputValue}`,
+            geoApiOptions)
+            .then((response) => response.json())
+            .then((response) => {
+                const predefinedOptions = predefinedCities.map(mapCityToOption);;
+                if (!inputValue) {
                     return {
-                        value: `${city.latitude} ${city.longitude}`,
-                        label: `${city.name}, ${city.countryCode}`,
+                        options: predefinedOptions,
                     };
-                }),
-            };
-        });
+                }
+
+                const fetchedOptions = response.data.map(mapCityToOption);
+                return {
+                    options: fetchedOptions,
+                    hasMore: response.hasMorePages,
+                };
+            });
     };
-    
+
     const handleOnChange = (searchData) => {
         setSearch(searchData);
         onSearchChange(searchData);
@@ -32,7 +74,7 @@ const Search = ({onSearchChange} ) => {
         <AsyncPaginate
             className="container"
             placeholder="Search for city"
-            debounceTimeout= {600}
+            debounceTimeout={600}
             value={search}
             onChange={handleOnChange}
             loadOptions={loadOptions}
