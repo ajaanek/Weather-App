@@ -1,4 +1,20 @@
 .container {
   max-width: 1080px;
+  min-width: 375px;
   margin: 40px auto;
 }
+
+
+.select {
+  width: 40%;
+  max-width: 90%;
+  border-radius: 10px;
+  padding: 10px;
+
+  @media (max-width: 375px) {
+      width: 90%;
+      /* Set width to 100% on smaller screens */
+    }
+}
+
+

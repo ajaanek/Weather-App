@@ -46,7 +46,7 @@ const Search = ({ onSearchChange }) => {
     });
 
     const loadOptions = (inputValue) => {
-        return fetch(`${GEO_API_URL}?minPopulation=100000&namePrefix=${inputValue}`,
+        return fetch(`${GEO_API_URL}?minPopulation=500000&namePrefix=${inputValue}`,
             geoApiOptions)
             .then((response) => response.json())
             .then((response) => {
@@ -71,14 +71,17 @@ const Search = ({ onSearchChange }) => {
     }
 
     return (
-        <AsyncPaginate
-            className="container"
-            placeholder="Search for city"
-            debounceTimeout={600}
-            value={search}
-            onChange={handleOnChange}
-            loadOptions={loadOptions}
-        />
+        <div className="container">
+            <AsyncPaginate
+                className="select"
+                placeholder="Search for city"
+                debounceTimeout={600}
+                value={search}
+                onChange={handleOnChange}
+                loadOptions={loadOptions}
+                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+            />
+        </div>
     )
 }
 
